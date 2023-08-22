@@ -1,14 +1,11 @@
 async function checkNewEmails() {
   let counter = 0
-  console.log()
   const data = await getEmail('inbox');
-  console.log(data)
   for (let i = 0; i < data.length; i++) {
     if(!data[i].read){
       counter++
     }
   }
-  console.log(counter)
   document.querySelector('#inbox span').style.display = "block"
   document.querySelector('#inbox span').textContent = counter
 }
