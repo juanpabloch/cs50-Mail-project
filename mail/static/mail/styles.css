@@ -501,3 +501,17 @@ a{
         width: 100%;
     }
 }
+
+/* inbox counter */
+#inbox span{
+    margin-left: 5px;
+    background-color: #fd5a68;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    padding: 2px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    display: none;
+}

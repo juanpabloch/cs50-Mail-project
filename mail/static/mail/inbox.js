@@ -1,5 +1,22 @@
-document.addEventListener('DOMContentLoaded', function() {
+async function checkNewEmails() {
+  let counter = 0
+  console.log()
+  const data = await getEmail('inbox');
+  console.log(data)
+  for (let i = 0; i < data.length; i++) {
+    if(!data[i].read){
+      counter++
+    }
+  }
+  console.log(counter)
+  document.querySelector('#inbox span').style.display = "block"
+  document.querySelector('#inbox span').textContent = counter
+}
 
+document.addEventListener('DOMContentLoaded', function() {
+    // #inbox span  
+  checkNewEmails()
+  setInterval(checkNewEmails, 50000);
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
@@ -137,47 +154,47 @@ async function renderEmailList(option){
   list.innerHTML = '';
   
   const data = await getEmail(option);
-    if(data.length){
-      data.forEach(email => {
-        const reciList= email.recipients.join(', ');
-        const div = document.createElement('div');
-        (email.read)? div.classList.add('email', 'read') : div.classList.add('email');
-        div.dataset.id = email.id;
-        div.innerHTML = `
-        <h4>${(option === 'sent')? `To: ${reciList}` : `From: ${email.sender}`}</h4>
-        <p ${(option !== 'sent')? `class="psubject"` : `class="psubject psubject-mobile"`}>${email.subject}</p>
-        <p class="ptime">${email.timestamp}</p>
-        `;
-        div.addEventListener('click', e=>{
-          let id;
-          if(e.target.dataset['id']){
-            id = e.target.dataset['id'];
-          }else{
-            id = e.target.parentElement.dataset['id'];
-          }
-          e.cancelBubble = true;
-          renderEmailView(id, option);
-        })
-        list.append(div);
-        
-        //if is not send render archive button
-        if(option !== 'sent'){
-          const button = document.createElement('img');
-          button.src = `${(option === 'archive')? `https://i.imgur.com/cdweDPH.png` : `https://i.imgur.com/bTlb0LY.png`}`;   
-          button.classList.add("archived", "archive-img");
-          div.append(button)
-          button.addEventListener('click', e=>{
-            e.cancelBubble = true
-            let id = e.target.parentElement.dataset['id'];
-            buttonArchived(id);
-          })
+  if(data.length){
+    data.forEach(email => {
+      const reciList= email.recipients.join(', ');
+      const div = document.createElement('div');
+      (email.read)? div.classList.add('email', 'read') : div.classList.add('email');
+      div.dataset.id = email.id;
+      div.innerHTML = `
+      <h4>${(option === 'sent')? `To: ${reciList}` : `From: ${email.sender}`}</h4>
+      <p ${(option !== 'sent')? `class="psubject"` : `class="psubject psubject-mobile"`}>${email.subject}</p>
+      <p class="ptime">${email.timestamp}</p>
+      `;
+      div.addEventListener('click', e=>{
+        let id;
+        if(e.target.dataset['id']){
+          id = e.target.dataset['id'];
+        }else{
+          id = e.target.parentElement.dataset['id'];
         }
-        
-      });
+        e.cancelBubble = true;
+        renderEmailView(id, option);
+      })
+      list.append(div);
+      
+      //if is not send render archive button
+      if(option !== 'sent'){
+        const button = document.createElement('img');
+        button.src = `${(option === 'archive')? `https://i.imgur.com/cdweDPH.png` : `https://i.imgur.com/bTlb0LY.png`}`;   
+        button.classList.add("archived", "archive-img");
+        div.append(button)
+        button.addEventListener('click', e=>{
+          e.cancelBubble = true
+          let id = e.target.parentElement.dataset['id'];
+          buttonArchived(id);
+        })
+      }
+      
+    });
 
-    }else{
-      list.textContent = 'No emails to show';
-    };
+  }else{
+    list.textContent = 'No emails to show';
+  };
 
 }
 
@@ -257,3 +274,4 @@ function reply_email(to, subject, body, time) {
     document.querySelector('#compose-body').value = `On ${time}, ${to} wrote: \n ${body} \n ..... \n`;
   }
 }
+
