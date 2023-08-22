@@ -72,7 +72,7 @@ async function getEmail(api){
 
 
 
-/* POST email api para enviar un email devuelve una respues sactisfactoria si se envia, o un error*/
+/* POST email api para enviar un email devuelve una respuesta sactisfactoria si se envia, o un error*/
 
 async function postEmail(recipients, subject, body){
   let newBody = body.replace(/\n/g, "<br>")

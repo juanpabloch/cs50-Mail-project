@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import JsonResponse
-from django.shortcuts import HttpResponse, HttpResponseRedirect, render
+from django.shortcuts import HttpResponse, HttpResponseRedirect, render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -23,12 +23,12 @@ def index(request):
 
     # Everyone else is prompted to sign in
     else:
-        return HttpResponseRedirect(reverse("login"))
+        return redirect('login')
 
 
 @csrf_exempt
 @login_required
-def compose(request):
+def write(request):
 
     # Composing a new email must be via POST
     if request.method != "POST":
@@ -169,7 +169,6 @@ def register(request):
                 "message": "Passwords must match."
             })
 
-        # Attempt to create new user
         try:
             user = User.objects.create_user(email, email, password)
             user.save()
