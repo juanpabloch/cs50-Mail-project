@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import dj_database_url
-from decouple import config
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -27,9 +26,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get("DEBUG") == "True" else False
 
-ALLOWED_HOSTS = ["*"]
+
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(' ')
 
 
 # Application definition
@@ -79,21 +79,17 @@ WSGI_APPLICATION = 'project3.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': os.getenv('DB_ENGINE'),
-    #     'NAME': os.getenv('DB_NAME'),
-    #     'USER': os.getenv('DB_USER'),
-    #     'PASSWORD': os.getenv('DB_PASSWORD'),
-    #     'HOST': os.getenv('DB_HOST'),
-    #     'PORT': os.getenv('DB_PORT'),
-    #  }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+     }
 }
 
-DATABASES['default'] = dj_database_url.config()
+DATABASES['default'] = dj_database_url.parse(os.environ.get("POSTGRES_URL"))
 
 AUTH_USER_MODEL = 'mail.User'
 
@@ -134,4 +130,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
